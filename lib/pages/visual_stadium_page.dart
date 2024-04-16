@@ -1,6 +1,6 @@
+import 'package:e_chipta/pages/payment_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 // import 'package:panorama/panorama.dart';
 
 import '../utils/color.dart';
@@ -23,7 +23,8 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
         centerTitle: true,
         title: Text(
           'Vizual ko\'rinish',
-          style: TextStyle(color: white),
+          style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins',color: Colors.white),
+
         ),
         leading: IconButton(
           icon: Icon(
@@ -60,15 +61,15 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                 backgroundColor: primary,
               ),
               onPressed: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => VisualStadiumPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PaymentScreen()));
               },
               child: Text(
                 "Sotib olish",
-                style: GoogleFonts.alexandria()
-                    .copyWith(color: white, fontSize: height * .02),
+                style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins',color: Colors.white),
+
               ),
             ),
           ),

@@ -28,7 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: width * .08,
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   icon: Icon(
                     Icons.chevron_left_rounded,
                     size: height * .05,

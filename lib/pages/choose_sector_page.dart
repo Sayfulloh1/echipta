@@ -32,7 +32,11 @@ class _ChooseSectorPageState extends State<ChooseSectorPage> {
         centerTitle: true,
         title: Text(
           'Sektor tanlash',
-          style: TextStyle(color: white),
+          style: TextStyle(
+              fontSize: height * .022,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'Poppins'),
         ),
         leading: IconButton(
           icon: Icon(
@@ -48,87 +52,96 @@ class _ChooseSectorPageState extends State<ChooseSectorPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               width: width,
               height: height * .15,
-              color: red,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(
-                              width: height * .07,
-                              height: height * .07,
-                              child: Image.asset(
-                                  'assets/images/teams/neftchi.png')),
-                          Text(
-                            'Neftchi',
-                            style: TextStyle(
-                              color: white,
-                              fontSize: height * .02,
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: height * .03),
+                decoration: BoxDecoration(
+                  color: white,
+
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            '17:00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: height * .04,
-                              color: white,
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '30-mart',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: height * .02,
-                              color: white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                              width: height * .07,
-                              height: height * .07,
-                              child: Image.asset(
-                                  'assets/images/teams/neftchi.png')),
-                          Text(
-                            'Neftchi',
-                            style: TextStyle(
-                              color: white,
-                              fontSize: height * .02,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.location_solid,
-                        color: grey,
-                      ),
-                      Text(
-                        'Bobur Arena',
-                        style: TextStyle(
-                          color: white,
-                          fontSize: height * .02,
+                          ],
                         ),
+                        Column(
+                          children: [
+                            Text(
+                              '17:00',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: height * .024,
+                                  fontFamily: 'Poppins'),
+                            ),
+                            Text(
+                              '30-mart',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: height * .013,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
+                            ),
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Bobur arena',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                        fontSize: height * .017,
+                        // fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             InkWell(
@@ -136,16 +149,17 @@ class _ChooseSectorPageState extends State<ChooseSectorPage> {
                 if (selectedRegion != null) {
                   mapKey.currentState?.toggleButton(selectedRegion!);
                 }
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => ChooseSeatPage(
-                //               sectorId: null,
-                //             )));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChooseSeatPage(
+                              sectorId: null,
+                            )));
               },
               child: Container(
                 width: width,
                 height: height * .4,
+                color: greyShade3,
                 child: InteractiveViewer(
                   scaleEnabled: true,
                   panEnabled: true,

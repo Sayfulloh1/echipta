@@ -62,15 +62,16 @@ class _MyPagesState extends State<MyPages> {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-color: Colors.white,
-        height: screenHeight * .1  ,
+        padding: EdgeInsets.zero,
+        // color: Colors.yellow,
+        height: screenHeight * .1,
         shape: const CircularNotchedRectangle(),
         clipBehavior: Clip.antiAlias,
-        notchMargin: screenWidth * .05,
+        notchMargin: screenWidth * .07,
         child: Material(
-           elevation: 0,
+          elevation: 0,
           child: Container(
-            height: screenHeight * .1  ,
+            height: screenHeight * .1,
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

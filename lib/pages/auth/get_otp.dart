@@ -1,81 +1,53 @@
-
-
-
+import 'package:e_chipta/pages/auth/create_account.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../presentation/styles_manager.dart';
 import '../../utils/color.dart';
 
-
 class GetOtp extends StatefulWidget {
   const GetOtp({super.key});
-
 
   @override
   State<GetOtp> createState() => _GetOtpState();
 }
 
-
-
-
-
-
 class _GetOtpState extends State<GetOtp> {
-
   @override
   void dispose() {
-   pincontroller.dispose();
-   focusNode.dispose();
+    pincontroller.dispose();
+    focusNode.dispose();
     super.dispose();
   }
-
 
   final key = GlobalKey<FormState>();
   final focusNode = FocusNode();
   final intRegex = RegExp(r'\d+', multiLine: true);
-  TextEditingController pincontroller =  TextEditingController();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  TextEditingController pincontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
 
-
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     final defaultPinTheme = PinTheme(
-      width: width*.15,
-      height:width*.2,
+      width: width * .15,
+      height: width * .2,
       textStyle: const TextStyle(
         fontSize: 22,
         color: Color.fromRGBO(30, 60, 87, 1),
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width*.06),
+        borderRadius: BorderRadius.circular(width * .06),
         border: Border.all(color: greyShade3),
         color: greyShade3,
       ),
     );
 
-
     return Material(
-
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * .05),
@@ -87,40 +59,35 @@ class _GetOtpState extends State<GetOtp> {
               children: [
                 SizedBox(height: height * .3),
                 Center(
-                  child: Text(
-                    'Kodni kiriting',
-                    style:getRegularTextStyle(height*.03,color: primary)
-                  ),
+                  child: Text('Kodni kiriting',
+                      style: getRegularTextStyle(height * .03, color: primary)),
                 ),
                 SizedBox(height: height * .03),
-              Pinput(
-                length: 5,
-                controller: pincontroller,
-                focusNode: focusNode,
-                androidSmsAutofillMethod:
-                AndroidSmsAutofillMethod.smsUserConsentApi,
-                listenForMultipleSmsOnAndroid: true,
-                defaultPinTheme: defaultPinTheme,
-                validator: numberValidator,
-
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-
-                    border: Border.all(color: focusedBorderColor),
+                Pinput(
+                  length: 5,
+                  controller: pincontroller,
+                  focusNode: focusNode,
+                  androidSmsAutofillMethod:
+                      AndroidSmsAutofillMethod.smsUserConsentApi,
+                  listenForMultipleSmsOnAndroid: true,
+                  defaultPinTheme: defaultPinTheme,
+                  validator: numberValidator,
+                  focusedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  submittedPinTheme: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      color: fillColor,
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  errorPinTheme: defaultPinTheme.copyBorderWith(
+                    border: Border.all(color: Colors.redAccent),
                   ),
                 ),
-                submittedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    color: fillColor,
-
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
-                ),
-              ),
-              /*  TextFieldPin(
+                /*  TextFieldPin(
                     textController: pincontroller,
                     autoFocus: true,
                     codeLength: 5,
@@ -139,20 +106,23 @@ class _GetOtpState extends State<GetOtp> {
 
                     }),*/
                 SizedBox(height: height * .03),
-
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(width, height * .07),
                     backgroundColor: primary,
                   ),
-                onPressed: (){
+                  onPressed: () {
                     focusNode.unfocus();
-                    key.currentState!.validate();
-                },
-                  child: Text(
-                    'Tasdiqlash',
-                      style: getRegularTextStyle(height*.02,color: white)
-                  ),
+                    if (key.currentState!.validate()) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CreateAccount()));
+                    }
+                    ;
+                  },
+                  child: Text('Tasdiqlash',
+                      style: getRegularTextStyle(height * .02, color: white)),
                 ),
               ],
             ),
@@ -161,7 +131,6 @@ class _GetOtpState extends State<GetOtp> {
       ),
     );
   }
-
 
   String? numberValidator(String? value) {
     if (value == null || value.isEmpty) {

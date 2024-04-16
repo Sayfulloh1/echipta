@@ -40,87 +40,96 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               width: width,
               height: height * .15,
-              color: red,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(
-                              width: height * .07,
-                              height: height * .07,
-                              child: Image.asset(
-                                  'assets/images/teams/neftchi.png')),
-                          Text(
-                            'Neftchi',
-                            style: TextStyle(
-                              color: white,
-                              fontSize: height * .02,
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: height * .03),
+                decoration: BoxDecoration(
+                  color: white,
+
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            '17:00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: height * .04,
-                              color: white,
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '30-mart',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: height * .02,
-                              color: white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                              width: height * .07,
-                              height: height * .07,
-                              child: Image.asset(
-                                  'assets/images/teams/neftchi.png')),
-                          Text(
-                            'Neftchi',
-                            style: TextStyle(
-                              color: white,
-                              fontSize: height * .02,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.location_solid,
-                        color: grey,
-                      ),
-                      Text(
-                        'Bobur Arena',
-                        style: TextStyle(
-                          color: white,
-                          fontSize: height * .02,
+                          ],
                         ),
+                        Column(
+                          children: [
+                            Text(
+                              '17:00',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: height * .024,
+                                  fontFamily: 'Poppins'),
+                            ),
+                            Text(
+                              '30-mart',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: height * .013,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
+                            ),
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Bobur arena',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                        fontSize: height * .017,
+                        // fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -136,8 +145,8 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
                 Row(
                   children: [
                     Container(
-                      width: width * .08,
-                      height: width * .08,
+                      width: width * .04,
+                      height: width * .04,
                       color: primary,
                     ),
                     SizedBox(
@@ -145,15 +154,15 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
                     ),
                     Text(
                       "Bo'sh joylar",
-                      style: TextStyle(fontSize: height * .02),
+                      style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
                 Row(
                   children: [
                     Container(
-                      width: width * .08,
-                      height: width * .08,
+                      width: width * .04,
+                      height: width * .04,
                       color: red,
                     ),
                     SizedBox(
@@ -161,15 +170,15 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
                     ),
                     Text(
                       "Band joylar",
-                      style: TextStyle(fontSize: height * .02),
+                      style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
                 Row(
                   children: [
                     Container(
-                      width: width * .08,
-                      height: width * .08,
+                      width: width * .04,
+                      height: width * .04,
                       color: Colors.greenAccent,
                     ),
                     SizedBox(
@@ -177,7 +186,7 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
                     ),
                     Text(
                       "Tanlangan",
-                      style: TextStyle(fontSize: height * .02),
+                      style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
@@ -210,8 +219,7 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
               },
               child: Text(
                 "Joyni ko'rish",
-                style: GoogleFonts.alexandria()
-                    .copyWith(color: white, fontSize: height * .02),
+                style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins',color: Colors.white),
               ),
             ),
             SizedBox(
