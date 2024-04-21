@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:e_chipta/pages/auth/create_account.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../presentation/styles_manager.dart';
 import '../../utils/color.dart';
+import 'package:http/http.dart' as http;
 
 class GetOtp extends StatefulWidget {
   const GetOtp({super.key});
@@ -111,16 +115,42 @@ class _GetOtpState extends State<GetOtp> {
                     minimumSize: Size(width, height * .07),
                     backgroundColor: primary,
                   ),
-                  onPressed: () {
-                    focusNode.unfocus();
-                    if (key.currentState!.validate()) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CreateAccount()));
+                  onPressed: () async {
+                    // Retrieve phone number from shared preferences
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    String? phoneNumber = prefs.getString('phoneNumber');
+
+                    // Get OTP entered by the user
+                    String otp = pincontroller.text;
+
+                    // Validate OTP and phone number
+                    if (key.currentState!.validate() && phoneNumber != null) {
+                      // Send verification request to the API
+                      const String apiUrl = 'https://test-api.echipta.uz/api/clients/verify-otp';
+                      final response = await http.post(
+                        Uri.parse(apiUrl),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json',
+                        },
+                        body: jsonEncode(<String, String>{
+                          'phone': phoneNumber,
+                          'code': otp,
+                        }),
+                      );
+
+                      if (response.statusCode == 200) {
+                        // OTP verification successful, navigate to CreateAccount page
+                        print('status code in otp screen is 200');
+                        print(response.body);
+
+                        goCreateAccount();
+                      } else {
+                        // Handle error (e.g., show error message)
+                        print('Failed to verify OTP');
+                      }
                     }
-                    ;
                   },
+
                   child: Text('Tasdiqlash',
                       style: getRegularTextStyle(height * .02, color: white)),
                 ),
@@ -152,5 +182,12 @@ class _GetOtpState extends State<GetOtp> {
 
     // Input is valid
     return null;
+  }
+
+  void goCreateAccount() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const CreateAccount()),
+    );
   }
 }

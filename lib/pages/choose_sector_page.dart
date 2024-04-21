@@ -175,9 +175,7 @@ Page resource error:
           onUrlChange: (UrlChange change) {
             debugPrint('url change to ${change.url}');
           },
-          onHttpAuthRequest: (HttpAuthRequest request) {
-            openDialog(request);
-          },
+          onHttpAuthRequest: (HttpAuthRequest request) {},
         ),
       )
       ..addJavaScriptChannel(
@@ -203,8 +201,10 @@ Page resource error:
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: primary,
         leading: IconButton(
@@ -226,12 +226,133 @@ Page resource error:
         ),
         // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
       ),
-      body: InteractiveViewer(
-        panEnabled: false, // Set it to false to prevent panning.
-        boundaryMargin: EdgeInsets.all(80),
-        minScale: 0.5,
-        maxScale: 4,
-        child: WebViewWidget(controller: _controller),
+      body: Column(
+        children: [
+          SizedBox(
+            width: width * .8,
+            height: height * .14,
+            child: InkWell(
+              onTap: () {
+                print('tapped');
+                /*Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChooseSectorPage()));*/
+              },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: height * .03),
+                decoration: BoxDecoration(
+                  color: white,
+                  borderRadius: BorderRadius.circular(height * .033),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
+                            ),
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              '17:00',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: height * .024,
+                                  fontFamily: 'Poppins'),
+                            ),
+                            Text(
+                              '30-mart',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: height * .013,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                                width: height * .05,
+                                height: height * .05,
+                                child: Image.asset(
+                                    'assets/images/teams/neftchi.png')),
+                            SizedBox(
+                              height: height * .009,
+                            ),
+                            Text(
+                              'Neftchi',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.grey,
+                                fontSize: height * .017,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Bobur arena',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                        fontSize: height * .017,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          InteractiveViewer(
+            panEnabled: false,
+            // Set it to false to prevent panning.
+            // boundaryMargin: EdgeInsets.all(80),
+            minScale: 0.5,
+            maxScale: 4,
+            child: Container(
+              width: width,
+              height: height * .7,
+              child: WebViewWidget(controller: _controller),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SectorTypeWidget(color: teal,type: 'Birinchi',),
+              SectorTypeWidget(color: Colors.green,type: 'Ikkinchi',),
+              SectorTypeWidget(color: Colors.blue,type: 'Uchinchi',),
+              SectorTypeWidget(color: Colors.orange,type: 'Vip',),
+              SectorTypeWidget(color: Colors.purple,type: 'FAN',),
+              SectorTypeWidget(color: Colors.red,type: 'Mehmon',),
+
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -249,420 +370,31 @@ Page resource error:
       child: const Icon(Icons.favorite),
     );
   }
-
-  Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final TextEditingController usernameTextController =
-        TextEditingController();
-    final TextEditingController passwordTextController =
-        TextEditingController();
-
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('${httpRequest.host}: ${httpRequest.realm ?? '-'}'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Username'),
-                  autofocus: true,
-                  controller: usernameTextController,
-                ),
-                TextField(
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  controller: passwordTextController,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            // Explicitly cancel the request on iOS as the OS does not emit new
-            // requests when a previous request is pending.
-            TextButton(
-              onPressed: () {
-                httpRequest.onCancel();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                httpRequest.onProceed(
-                  WebViewCredential(
-                    user: usernameTextController.text,
-                    password: passwordTextController.text,
-                  ),
-                );
-                Navigator.of(context).pop();
-              },
-              child: const Text('Authenticate'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
-enum MenuOptions {
-  showUserAgent,
-  listCookies,
-  clearCookies,
-  addToCache,
-  listCache,
-  clearCache,
-  navigationDelegate,
-  doPostRequest,
-  loadLocalFile,
-  loadFlutterAsset,
-  loadHtmlString,
-  transparentBackground,
-  setCookie,
-  logExample,
-  basicAuthentication,
-}
-
-class SampleMenu extends StatelessWidget {
-  SampleMenu({
+class SectorTypeWidget extends StatelessWidget {
+  const SectorTypeWidget({
+    required this.type,
+    required this.color,
     super.key,
-    required this.webViewController,
+
   });
-
-  final WebViewController webViewController;
-  late final WebViewCookieManager cookieManager = WebViewCookieManager();
-
+ final String type;
+ final Color color;
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<MenuOptions>(
-      key: const ValueKey<String>('ShowPopupMenu'),
-      onSelected: (MenuOptions value) {
-        switch (value) {
-          case MenuOptions.showUserAgent:
-            _onShowUserAgent();
-          case MenuOptions.listCookies:
-            _onListCookies(context);
-          case MenuOptions.clearCookies:
-            _onClearCookies(context);
-          case MenuOptions.addToCache:
-            _onAddToCache(context);
-          case MenuOptions.listCache:
-            _onListCache();
-          case MenuOptions.clearCache:
-            _onClearCache(context);
-          case MenuOptions.navigationDelegate:
-            _onNavigationDelegateExample();
-          case MenuOptions.doPostRequest:
-            _onDoPostRequest();
-          case MenuOptions.loadLocalFile:
-            _onLoadLocalFileExample();
-          case MenuOptions.loadFlutterAsset:
-            _onLoadFlutterAssetExample();
-          case MenuOptions.loadHtmlString:
-            _onLoadHtmlStringExample();
-          case MenuOptions.transparentBackground:
-            _onTransparentBackground();
-          case MenuOptions.setCookie:
-            _onSetCookie();
-          case MenuOptions.logExample:
-            _onLogExample();
-          case MenuOptions.basicAuthentication:
-            _promptForUrl(context);
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.showUserAgent,
-          child: Text('Show user agent'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.listCookies,
-          child: Text('List cookies'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.clearCookies,
-          child: Text('Clear cookies'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.addToCache,
-          child: Text('Add to cache'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.listCache,
-          child: Text('List cache'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.clearCache,
-          child: Text('Clear cache'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.navigationDelegate,
-          child: Text('Navigation Delegate example'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.doPostRequest,
-          child: Text('Post Request'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.loadHtmlString,
-          child: Text('Load HTML string'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.loadLocalFile,
-          child: Text('Load local file'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.loadFlutterAsset,
-          child: Text('Load Flutter Asset'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          key: ValueKey<String>('ShowTransparentBackgroundExample'),
-          value: MenuOptions.transparentBackground,
-          child: Text('Transparent background example'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.setCookie,
-          child: Text('Set cookie'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.logExample,
-          child: Text('Log example'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.basicAuthentication,
-          child: Text('Basic Authentication Example'),
-        ),
-      ],
-    );
-  }
+    return Container(
 
-  Future<void> _onShowUserAgent() {
-    // Send a message with the user agent string to the Toaster JavaScript channel we registered
-    // with the WebView.
-    return webViewController.runJavaScript(
-      'Toaster.postMessage("User Agent: " + navigator.userAgent);',
-    );
-  }
-
-  Future<void> _onListCookies(BuildContext context) async {
-    final String cookies = await webViewController
-        .runJavaScriptReturningResult('document.cookie') as String;
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text('Cookies:'),
-            _getCookieList(cookies),
-          ],
-        ),
-      ));
-    }
-  }
-
-  Future<void> _onAddToCache(BuildContext context) async {
-    await webViewController.runJavaScript(
-      'caches.open("test_caches_entry"); localStorage["test_localStorage"] = "dummy_entry";',
-    );
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Added a test entry to cache.'),
-      ));
-    }
-  }
-
-  Future<void> _onListCache() {
-    return webViewController.runJavaScript('caches.keys()'
-        // ignore: missing_whitespace_between_adjacent_strings
-        '.then((cacheKeys) => JSON.stringify({"cacheKeys" : cacheKeys, "localStorage" : localStorage}))'
-        '.then((caches) => Toaster.postMessage(caches))');
-  }
-
-  Future<void> _onClearCache(BuildContext context) async {
-    await webViewController.clearCache();
-    await webViewController.clearLocalStorage();
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Cache cleared.'),
-      ));
-    }
-  }
-
-  Future<void> _onClearCookies(BuildContext context) async {
-    final bool hadCookies = await cookieManager.clearCookies();
-    String message = 'There were cookies. Now, they are gone!';
-    if (!hadCookies) {
-      message = 'There are no cookies.';
-    }
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-      ));
-    }
-  }
-
-  Future<void> _onNavigationDelegateExample() {
-    final String contentBase64 = base64Encode(
-      const Utf8Encoder().convert(kNavigationExamplePage),
-    );
-    return webViewController.loadRequest(
-      Uri.parse('data:text/html;base64,$contentBase64'),
-    );
-  }
-
-  Future<void> _onSetCookie() async {
-    await cookieManager.setCookie(
-      const WebViewCookie(
-        name: 'foo',
-        value: 'bar',
-        domain: 'httpbin.org',
-        path: '/anything',
+      padding: const EdgeInsets.symmetric(horizontal: 2,vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 2,vertical: 2),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(5),
       ),
-    );
-    await webViewController.loadRequest(Uri.parse(
-      'https://httpbin.org/anything',
-    ));
-  }
-
-  Future<void> _onDoPostRequest() {
-    return webViewController.loadRequest(
-      Uri.parse('https://httpbin.org/post'),
-      method: LoadRequestMethod.post,
-      headers: <String, String>{'foo': 'bar', 'Content-Type': 'text/plain'},
-      body: Uint8List.fromList('Test Body'.codeUnits),
-    );
-  }
-
-  Future<void> _onLoadLocalFileExample() async {
-    final String pathToIndex = await _prepareLocalFile();
-    await webViewController.loadFile(pathToIndex);
-  }
-
-  Future<void> _onLoadFlutterAssetExample() {
-    return webViewController.loadFlutterAsset('assets/www/index.html');
-  }
-
-  Future<void> _onLoadHtmlStringExample() {
-    return webViewController.loadHtmlString(kLocalExamplePage);
-  }
-
-  Future<void> _onTransparentBackground() {
-    return webViewController.loadHtmlString(kTransparentBackgroundPage);
-  }
-
-  Widget _getCookieList(String cookies) {
-    if (cookies == '""') {
-      return Container();
-    }
-    final List<String> cookieList = cookies.split(';');
-    final Iterable<Text> cookieWidgets =
-        cookieList.map((String cookie) => Text(cookie));
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: cookieWidgets.toList(),
-    );
-  }
-
-  static Future<String> _prepareLocalFile() async {
-    final String tmpDir = (await getTemporaryDirectory()).path;
-    final File indexFile = File(
-        <String>{tmpDir, 'www', 'index.html'}.join(Platform.pathSeparator));
-
-    await indexFile.create(recursive: true);
-    await indexFile.writeAsString(kLocalExamplePage);
-
-    return indexFile.path;
-  }
-
-  Future<void> _onLogExample() {
-    webViewController
-        .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
-      debugPrint(
-          '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}');
-    });
-
-    return webViewController.loadHtmlString(kLogExamplePage);
-  }
-
-  Future<void> _promptForUrl(BuildContext context) {
-    final TextEditingController urlTextController = TextEditingController();
-
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Input URL to visit'),
-          content: TextField(
-            decoration: const InputDecoration(labelText: 'URL'),
-            autofocus: true,
-            controller: urlTextController,
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                if (urlTextController.text.isNotEmpty) {
-                  final Uri? uri = Uri.tryParse(urlTextController.text);
-                  if (uri != null && uri.scheme.isNotEmpty) {
-                    webViewController.loadRequest(uri);
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              child: const Text('Visit'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class NavigationControls extends StatelessWidget {
-  const NavigationControls({super.key, required this.webViewController});
-
-  final WebViewController webViewController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () async {
-            if (await webViewController.canGoBack()) {
-              await webViewController.goBack();
-            } else {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No back history item')),
-                );
-              }
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.arrow_forward_ios),
-          onPressed: () async {
-            if (await webViewController.canGoForward()) {
-              await webViewController.goForward();
-            } else {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No forward history item')),
-                );
-              }
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.replay),
-          onPressed: () => webViewController.reload(),
-        ),
-      ],
+      child: Text(
+        type,
+        style: TextStyle(fontFamily: 'Poppins',color: Colors.white),
+      ),
     );
   }
 }
