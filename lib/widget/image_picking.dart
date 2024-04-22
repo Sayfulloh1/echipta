@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../presentation/styles_manager.dart';
-
+import 'package:http/http.dart' as http;
 class ImagePickerContainer extends StatefulWidget {
   final Function(XFile) onImagePicked;
 
@@ -13,21 +13,55 @@ class ImagePickerContainer extends StatefulWidget {
 
   @override
   State<ImagePickerContainer> createState() => _ImagePickerContainerState();
+
+  void onImageUploaded(String imageUrl) {}
 }
 
 class _ImagePickerContainerState extends State<ImagePickerContainer> {
-  XFile? pickedImage;
+  File? pickedImage;
 
   Future<void> _pickImage() async {
-    final XFile? image =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final image =
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        pickedImage = image;
+        pickedImage = File(image.path);
       });
-      widget.onImagePicked(image); // Call the callback function with the image
+      _uploadImage(pickedImage!); // Upload the picked image
     }
   }
+
+  Future<void> _uploadImage(File imageFile) async {
+    // Create a multipart request
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('https://test-api.echipta.uz/api/clients/update-personal-data'), // Replace with your API endpoint
+    );
+
+    // Add the image file to the request
+    request.files.add(
+      await http.MultipartFile.fromPath('image', imageFile.path),
+    );
+
+    // Send the request
+    var response = await request.send();
+
+    // Handle the response
+    if (response.statusCode == 200) {
+      // Image uploaded successfully
+      // Get the URL of the uploaded image from the response
+
+      final imageUrl = await response.stream.bytesToString();
+      widget.onImageUploaded(imageUrl);
+      print('user data uploaded');// Pass the image URL to the callback function
+    } else {
+      // Image upload failed
+      print('Image upload failed with status code ${response.statusCode}');
+      // widget.onImageUploaded(); // Pass null to indicate failure
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

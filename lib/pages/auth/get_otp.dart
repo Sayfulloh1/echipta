@@ -9,6 +9,9 @@ import '../../presentation/styles_manager.dart';
 import '../../utils/color.dart';
 import 'package:http/http.dart' as http;
 
+import '../choose_club_page.dart';
+import '../page_navigation.dart';
+
 class GetOtp extends StatefulWidget {
   const GetOtp({super.key});
 
@@ -117,7 +120,8 @@ class _GetOtpState extends State<GetOtp> {
                   ),
                   onPressed: () async {
                     // Retrieve phone number from shared preferences
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     String? phoneNumber = prefs.getString('phoneNumber');
 
                     // Get OTP entered by the user
@@ -126,14 +130,15 @@ class _GetOtpState extends State<GetOtp> {
                     // Validate OTP and phone number
                     if (key.currentState!.validate() && phoneNumber != null) {
                       // Send verification request to the API
-                      const String apiUrl = 'https://test-api.echipta.uz/api/clients/verify-otp';
+                      const String apiUrl =
+                          'https://test-api.echipta.uz/api/clients/verify-otp';
                       final response = await http.post(
                         Uri.parse(apiUrl),
                         headers: <String, String>{
                           'Content-Type': 'application/json',
                         },
                         body: jsonEncode(<String, String>{
-                          'phone': phoneNumber,
+                          'phone': '998$phoneNumber',
                           'code': otp,
                         }),
                       );
@@ -143,14 +148,77 @@ class _GetOtpState extends State<GetOtp> {
                         print('status code in otp screen is 200');
                         print(response.body);
 
-                        goCreateAccount();
-                      } else {
+                        Map<String, dynamic> responseData =
+                            json.decode(response.body);
+
+                        // Extract access token from the response data
+                        String accessToken =
+                            responseData['data']['access_token'];
+
+                        // Save the access token to shared preferences
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setString('accessToken', accessToken);
+                        print(
+                            'token is saved : ${responseData['data']['access_token']}');
+
+                        // Send a GET request to fetch user data using the access token
+                        const String apiUrl =
+                            'https://test-api.echipta.uz/api/clients/me';
+                        final getUserResponse = await http.get(
+                          Uri.parse(apiUrl),
+                          headers: <String, String>{
+                            'Authorization': 'Bearer $accessToken',
+                            // Include the access token in the Authorization header
+                          },
+                        );
+
+                        if (getUserResponse.statusCode == 200) {
+                          // Parse the response JSON of the user data
+                          Map<String, dynamic> userData =
+                              json.decode(getUserResponse.body);
+
+                          // Extract is_filed and team from the response
+                          bool isFiled = userData['data']['is_filed'];
+                          Map<String, dynamic>? team = userData['data']['team'];
+
+                          if (!isFiled) {
+                            goCreateAccount();
+                          }
+                          else {
+                            // If is_filed is true, check if team is not null
+                            if (team != null) {
+                              // If team is not null, navigate to MyPages page
+                              goMyPages();
+                            }
+                            else {
+                              // If team is null, navigate to ChooseClubTeam page
+                              goChooseClub();
+                            }
+                          }
+
+
+
+                          // Here, you can handle the user data as per your requirement
+
+                          // For example, if you want to print the user's full name
+                          print(
+                              'User Full Name: ${userData['data']['full_name']}');
+                        }
+                        else {
+                          // Handle error (e.g., show error message)
+                          print('Failed to fetch user data');
+                        }
+
+
+                      }
+                      else {
                         // Handle error (e.g., show error message)
+                        print(response.body);
                         print('Failed to verify OTP');
                       }
                     }
                   },
-
                   child: Text('Tasdiqlash',
                       style: getRegularTextStyle(height * .02, color: white)),
                 ),
@@ -188,6 +256,20 @@ class _GetOtpState extends State<GetOtp> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const CreateAccount()),
+    );
+  }
+
+  void goMyPages() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MyPages()),
+    );
+  }
+
+  void goChooseClub() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const ChooseClubTeam()),
     );
   }
 }

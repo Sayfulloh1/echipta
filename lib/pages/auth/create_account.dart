@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:e_chipta/pages/verify_profile.dart';
 import 'package:e_chipta/widget/birthday_picker.dart';
 import 'package:e_chipta/widget/image_picking.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../presentation/styles_manager.dart';
 import '../../utils/color.dart';
@@ -21,6 +24,27 @@ class _CreateAccountState extends State<CreateAccount> {
   TextEditingController imageController = TextEditingController();
 
   bool isChecked = false;
+  String? uploadedImageUrl;
+
+  XFile? _image;
+
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _image = pickedImage;
+      });
+    }
+  }
+
+  void handleImageUploaded(String? imageUrl) {
+    setState(() {
+      uploadedImageUrl = imageUrl; // Update the state with the uploaded image URL
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +64,17 @@ class _CreateAccountState extends State<CreateAccount> {
                 SizedBox(height: height * .1),
                 Text(
                   'Hisob ochish',
-                    style:getRegularTextStyle(height*.03,color: primary),
+                  style: getRegularTextStyle(height * .03, color: primary),
                 ),
                 SizedBox(height: height * .03),
                 TextFormField(
                   controller: nameController,
-                  style: getRegularTextStyle(height*.02,color: grey),
-
+                  style: getRegularTextStyle(height * .02, color: grey),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (name) {},
                   decoration: InputDecoration(
                     hintText: 'Ism va familiya',
-                    hintStyle: getRegularTextStyle(height*.02,color: grey),
+                    hintStyle: getRegularTextStyle(height * .02, color: grey),
                     fillColor: txtFieldBack,
                     filled: true,
                     border: OutlineInputBorder(
@@ -77,13 +100,19 @@ class _CreateAccountState extends State<CreateAccount> {
                 ),
                 SizedBox(height: height * .03),
                 BirthdateFormField(
-                    hintText: "Tug'ilgan sana",
-
-                    controller: birthdayController),
+                    hintText: "Tug'ilgan sana", controller: birthdayController),
                 SizedBox(height: height * .03),
-                ImagePickerContainer(
-                  onImagePicked: (image) {},
-                ),
+                _image == null
+                    ? ImagePickerContainer(
+                        onImagePicked: (image) {
+                          _getImage();
+                        },
+                      )
+                    : Image.file(
+                        File(_image!.path),
+                        height: 100,
+                        width: 100,
+                      ),
                 SizedBox(height: height * .03),
                 Row(
                   children: [
@@ -108,7 +137,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     ),
                     Text(
                       "Barchasi to'gri",
-                        style: getRegularTextStyle(height*.02,color: primary),
+                      style: getRegularTextStyle(height * .02, color: primary),
                     )
                   ],
                 ),
@@ -116,9 +145,11 @@ class _CreateAccountState extends State<CreateAccount> {
                 Text(
                   maxLines: 3,
                   "Diqqat ushbu ma`lumotlaringiz to`griligiga ishonch hosil qiling. Ma`lumotlar ID kartangizga bog`lanadi",
-                  style: getMainTextStyle(height*.02,color: grey),
+                  style: getMainTextStyle(height * .02, color: grey),
                 ),
-                SizedBox(height: height*.2,),
+                SizedBox(
+                  height: height * .2,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(width, height * .07),
@@ -138,7 +169,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   },
                   child: Text(
                     "Ro'yhatdan o'tish",
-                    style: getRegularTextStyle(height*.02,color: white),
+                    style: getRegularTextStyle(height * .02, color: white),
                   ),
                 ),
               ],
