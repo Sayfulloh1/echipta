@@ -1,4 +1,3 @@
-
 import 'package:e_chipta/pages/auth/create_account.dart';
 import 'package:e_chipta/repository/auth_repo.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +119,7 @@ class _GetOtpState extends State<GetOtp> {
   // }
 
   var isLoading = false;
+  var token = '';
 
   void setLoading() {
     setState(() {
@@ -133,6 +133,49 @@ class _GetOtpState extends State<GetOtp> {
     });
   }
 
+  void onCheckUser() async {
+    setLoading();
+    final data = await sl<AuthRepository>().getMe(token: token);
+
+    data.fold(
+      (left) {
+        print('error left: ${left.message}');
+        dismissLoading();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
+      },
+      (right) {
+        dismissLoading();
+        if (!right.response.data['data']['is_filed']) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CreateAccount(),
+              ),
+              (route) => false);
+        }
+        else{
+          if(right.response.data['data']['team']==null){
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChooseClubTeam(),
+                ),
+                    (route) => false);
+          }
+          else{
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyPages(),
+                ),
+                    (route) => false);
+          }
+        }
+      },
+    );
+  }
+
   void onCheckOtp() async {
     setLoading();
     final data = await sl<AuthRepository>()
@@ -141,9 +184,11 @@ class _GetOtpState extends State<GetOtp> {
     data.fold((left) {
       print('error left: ${left.message}');
       dismissLoading();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('error: ${left.message}')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
     }, (right) {
+      token = right.token;
+
       dismissLoading();
       Navigator.pushAndRemoveUntil(
         context,
@@ -241,7 +286,10 @@ class _GetOtpState extends State<GetOtp> {
                     minimumSize: Size(width, height * .07),
                     backgroundColor: primary,
                   ),
-                  onPressed: onCheckOtp,
+                  onPressed: (){
+                    onCheckOtp();
+                    onCheckUser();
+                  },
                   child: isLoading
                       ? const CircularProgressIndicator()
                       : Text('Tasdiqlash',
