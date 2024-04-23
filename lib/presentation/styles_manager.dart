@@ -1,4 +1,3 @@
-import 'package:e_chipta/utils/color.dart';
 import 'package:flutter/material.dart';
 
 TextStyle getMainTextStyle(double fontSize,
