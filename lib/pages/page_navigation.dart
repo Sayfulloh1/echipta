@@ -35,7 +35,7 @@ class _MyPagesState extends State<MyPages> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: txtFieldBack,
+      backgroundColor: Color(0xffF6F6F6),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Transform.scale(
         scale: 1.5,
@@ -63,7 +63,6 @@ class _MyPagesState extends State<MyPages> {
       ),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
-        // color: Colors.yellow,
         height: screenHeight * .1,
         shape: const CircularNotchedRectangle(),
         clipBehavior: Clip.antiAlias,
@@ -82,6 +81,7 @@ class _MyPagesState extends State<MyPages> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const SizedBox(width: 5,),
                       Column(
                         children: [
                           IconButton(
@@ -132,6 +132,7 @@ class _MyPagesState extends State<MyPages> {
                           ),
                         ],
                       ),
+                      const SizedBox(width: 10,),
                     ],
                   ),
                 ),
@@ -141,6 +142,7 @@ class _MyPagesState extends State<MyPages> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const SizedBox(width: 10,),
                       Column(
                         children: [
                           IconButton(
@@ -191,6 +193,7 @@ class _MyPagesState extends State<MyPages> {
                           ),
                         ],
                       ),
+                      const SizedBox(width: 5,),
                     ],
                   ),
                 ),

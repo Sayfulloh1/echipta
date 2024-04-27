@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:e_chipta/core/consants.dart';
 import 'package:e_chipta/core/exception.dart';
@@ -41,7 +44,7 @@ class AuthRepository {
       return const Left(NoInternetFailure());
     }
   }
-  var token_data;
+
 
 
   //verify otp
@@ -62,7 +65,7 @@ class AuthRepository {
           throw const ServerException(message: 'token empty');
         }
         await localSource.putString('token', token);
-        token_data = token;
+
         return  Right(token);
       } catch (e) {
         if (e is DioException) {
@@ -83,34 +86,52 @@ class AuthRepository {
   }
 
 
-  //get user info
-  Future<Either<Failure, dynamic>> getMe({required String token}) async {
-    if (await networkInfo.isConnected) {
-      try {
-        print('token is $token');
-        final response = await dio.get(
-          '${AppConstants.baseUrl}/me',
-          options: Options(
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization":
-                  "Bearer $token_data",
-            },
-          ),
-        );
 
-        var is_filed = response.data['data']['is_filed'];
-        var team = response.data['data']['team'];
+  //get user info
+  //get user info
+  Future<Either<Failure, dynamic>> getMe() async {
+    if (await networkInfo.isConnected) {
+      String? token;
+      try {
+        token =  localSource.getString('token');
+      } catch (e) {
+        // Handle error retrieving token from local storage (optional)
+        print('Error getting token from local storage: $e');
+      }
+
+      if (token == null) {
+        // No token found, handle this scenario (show login or something)
+        return const Left(NoTokenFailure());
+      }
+
+      // Now use the token in the network call
+      final response = await dio.get(
+        '${AppConstants.baseUrl}/me',
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      try {
+        bool? is_filed = response.data['data']['is_filed'];
+        Object? team = response.data['data']['team'];
         if (is_filed == null) {
           throw const ServerException(message: 'user data empty');
         }
-        await localSource.putBool(key: 'is_filed',value: is_filed);
+        await localSource.putBool(key: 'is_filed', value: is_filed);
 
         if (team == null) {
           throw const ServerException(message: 'team empty');
         }
-        await localSource.putList('team', team);
-        return  Right(response);
+
+        // Encode team Map as JSON before saving
+        final teamJson = jsonEncode(team);
+        await localSource.putString('team', teamJson);
+
+        return Right(response);
       } catch (e) {
         if (e is DioException) {
           return Left(
@@ -120,14 +141,21 @@ class AuthRepository {
             ),
           );
         }
-        print('repo error is ${e}');
-
+        print('repo error is $e');
         return const Left(ServerFailure(message: 'Something went wrong'));
       }
     } else {
-      return const Left(NoInternetFailure());
+      return Left(NoInternetFailure());
     }
   }
+
+
+
+
+
+
+
+
 
 
 

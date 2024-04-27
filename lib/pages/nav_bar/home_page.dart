@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Material(
-      color: txtFieldBack,
+      color: const Color(0xffF6F6F6),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                                         prefixIcon: Icon(
                                           Icons.search,
                                           color: black,
-                                          size: height * .05,
+                                          size: height * .03,
                                         ),
                                         contentPadding: EdgeInsets.all(
                                             MediaQuery.of(context).size.height /
@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                                           'Neftchi',
                                           style: TextStyle(
                                             fontFamily: 'Poppins',
-                                            color: Colors.grey,
+                                            color: primary,
                                             fontSize: height * .017,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -244,6 +244,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           '17:00',
                                           style: TextStyle(
+                                            color: primary,
                                               fontWeight: FontWeight.bold,
                                               fontSize: height * .024,
                                               fontFamily: 'Poppins'),
@@ -251,6 +252,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           '30-mart',
                                           style: TextStyle(
+                                            color: primary,
                                             fontWeight: FontWeight.bold,
                                             fontSize: height * .013,
                                             fontFamily: 'Poppins',
@@ -272,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                                           'Neftchi',
                                           style: TextStyle(
                                             fontFamily: 'Poppins',
-                                            color: Colors.grey,
+                                            color: primary,
                                             fontSize: height * .017,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -349,6 +351,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     width: width,
+
                     // height: height * .5,
                     child: ListView.builder(
                       itemCount: 3,
@@ -375,7 +378,14 @@ class _HomePageState extends State<HomePage> {
                                   left: width * .04,
                                   right: width * .04),
                               decoration: BoxDecoration(
-                                color: primary,
+                                  color: Colors.white,
+                                   boxShadow: [
+                                     BoxShadow(
+                                       color: greyShade2,
+                                       spreadRadius: 3,
+                                       blurRadius: 2
+                                     ),
+                                   ],
                                 borderRadius:
                                     BorderRadius.circular(height * .033),
                               ),
@@ -391,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                                             'Andijon',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color: Colors.white,
+                                              color: primary,
                                               fontSize: height * .014,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -414,7 +424,27 @@ class _HomePageState extends State<HomePage> {
                                               fontWeight: FontWeight.bold,
                                               fontSize: height * .016,
                                               fontFamily: 'Poppins',
-                                              color: white,
+                                              color: primary,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: width*.2,
+                                            height: height*.02,
+                                            decoration: BoxDecoration(
+                                              color:  Colors.green,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child:  Center(
+                                              child: Text(
+
+                                                'Boshlandi',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  color: white,
+                                                  fontSize: height * .01,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -433,7 +463,7 @@ class _HomePageState extends State<HomePage> {
                                             'Neftchi',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              color: Colors.white,
+                                              color: primary,
                                               fontSize: height * .014,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -505,7 +535,7 @@ class _HomePageState extends State<HomePage> {
                                     left: width * .04,
                                     right: width * .04),
                                 decoration: BoxDecoration(
-                                  color: primary,
+                                  color: white,
                                   borderRadius:
                                       BorderRadius.circular(height * .033),
                                 ),
@@ -521,7 +551,7 @@ class _HomePageState extends State<HomePage> {
                                               'Andijon',
                                               style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color: Colors.white,
+                                                color: primary,
                                                 fontSize: height * .014,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -544,7 +574,27 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: height * .016,
                                                 fontFamily: 'Poppins',
-                                                color: white,
+                                                color: primary,
+                                              ),
+                                            ),
+                                            Container(
+                                              width: width*.2,
+                                              height: height*.02,
+                                              decoration: BoxDecoration(
+                                                color:  primary,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child:  Center(
+                                                child: Text(
+
+                                                  '00-00-00-00',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    color: white,
+                                                    fontSize: height * .01,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -563,7 +613,7 @@ class _HomePageState extends State<HomePage> {
                                               'Neftchi',
                                               style: TextStyle(
                                                 fontFamily: 'Poppins',
-                                                color: Colors.white,
+                                                color: primary,
                                                 fontSize: height * .014,
                                                 fontWeight: FontWeight.bold,
                                               ),

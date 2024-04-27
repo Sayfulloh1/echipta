@@ -32,6 +32,15 @@ class NoInternetFailure extends Failure {
   @override
   List<Object?> get props => [message, statusCode];
 }
+class NoTokenFailure extends Failure {
+  const NoTokenFailure({
+     super.message='No token found',
+    super.statusCode,
+  });
+
+  @override
+  List<Object?> get props => [message, statusCode];
+}
 
 class CacheFailure extends Failure {
   const CacheFailure({ super.message = 'No cached data found', super.statusCode});

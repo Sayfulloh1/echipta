@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:e_chipta/pages/auth/create_account.dart';
 import 'package:e_chipta/repository/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../injector_container.dart';
 import '../../presentation/styles_manager.dart';
@@ -32,94 +36,10 @@ class _GetOtpState extends State<GetOtp> {
   final intRegex = RegExp(r'\d+', multiLine: true);
   TextEditingController pinController = TextEditingController();
 
-  // void onCheckOtp() async{
-  //   // Retrieve phone number from shared preferences
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? phoneNumber = prefs.getString('phoneNumber');
-  //
-  //   // Get OTP entered by the user
-  //   String otp = pinController.text;
-  //
-  //   // Validate OTP and phone number
-  //   if (key.currentState!.validate() && phoneNumber != null) {
-  //     // Send verification request to the API
-  //     const String apiUrl =
-  //         'https://test-api.echipta.uz/api/clients/verify-otp';
-  //     final response = await http.post(
-  //       Uri.parse(apiUrl),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: jsonEncode(<String, String>{
-  //         'phone': '998$phoneNumber',
-  //         'code': otp,
-  //       }),
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       // OTP verification successful, navigate to CreateAccount page
-  //       print('status code in otp screen is 200');
-  //       print(response.body);
-  //
-  //       Map<String, dynamic> responseData = json.decode(response.body);
-  //
-  //       // Extract access token from the response data
-  //       String accessToken = responseData['data']['access_token'];
-  //
-  //       // Save the access token to shared preferences
-  //       SharedPreferences prefs = await SharedPreferences.getInstance();
-  //       await prefs.setString('accessToken', accessToken);
-  //       print('token is saved : ${responseData['data']['access_token']}');
-  //
-  //       // Send a GET request to fetch user data using the access token
-  //       const String apiUrl = 'https://test-api.echipta.uz/api/clients/me';
-  //       final getUserResponse = await http.get(
-  //         Uri.parse(apiUrl),
-  //         headers: <String, String>{
-  //           'Authorization': 'Bearer $accessToken',
-  //           // Include the access token in the Authorization header
-  //         },
-  //       );
-  //
-  //       if (getUserResponse.statusCode == 200) {
-  //         // Parse the response JSON of the user data
-  //         Map<String, dynamic> userData = json.decode(getUserResponse.body);
-  //
-  //         // Extract is_filed and team from the response
-  //         bool isFiled = userData['data']['is_filed'];
-  //         Map<String, dynamic>? team = userData['data']['team'];
-  //
-  //         if (!isFiled) {
-  //           goCreateAccount();
-  //         } else {
-  //           // If is_filed is true, check if team is not null
-  //           if (team != null) {
-  //             // If team is not null, navigate to MyPages page
-  //             goMyPages();
-  //           } else {
-  //             // If team is null, navigate to ChooseClubTeam page
-  //             goChooseClub();
-  //           }
-  //         }
-  //
-  //         // Here, you can handle the user data as per your requirement
-  //
-  //         // For example, if you want to print the user's full name
-  //         print('User Full Name: ${userData['data']['full_name']}');
-  //       } else {
-  //         // Handle error (e.g., show error message)
-  //         print('Failed to fetch user data');
-  //       }
-  //     } else {
-  //       // Handle error (e.g., show error message)
-  //       print(response.body);
-  //       print('Failed to verify OTP');
-  //     }
-  //   }
-  // }
+
 
   var isLoading = false;
-  var token = '';
+
 
   void setLoading() {
     setState(() {
@@ -133,48 +53,7 @@ class _GetOtpState extends State<GetOtp> {
     });
   }
 
-  void onCheckUser() async {
-    setLoading();
-    final data = await sl<AuthRepository>().getMe(token: token);
 
-    data.fold(
-      (left) {
-        print('error left: ${left.message}');
-        dismissLoading();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
-      },
-      (right) {
-        dismissLoading();
-        if (!right.response.data['data']['is_filed']) {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreateAccount(),
-              ),
-              (route) => false);
-        }
-        else{
-          if(right.response.data['data']['team']==null){
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChooseClubTeam(),
-                ),
-                    (route) => false);
-          }
-          else{
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MyPages(),
-                ),
-                    (route) => false);
-          }
-        }
-      },
-    );
-  }
 
   void onCheckOtp() async {
     setLoading();
@@ -187,18 +66,60 @@ class _GetOtpState extends State<GetOtp> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
     }, (right) {
-      token = right.token;
 
-      dismissLoading();
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CreateAccount(),
-        ),
-        (_) => false,
-      );
+
+
     });
   }
+  void onCheckUser() async {
+    setLoading();
+    final data = await sl<AuthRepository>().getMe();
+
+    data.fold(
+          (left) {
+        print('error left: ${left.message}');
+        dismissLoading();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
+      },
+          (right) async {
+        dismissLoading();
+        // Retrieve is_filed and team from local storage
+        final prefs = await SharedPreferences.getInstance();
+        final isFiled = prefs.getBool('is_filed');
+        final teamJson = prefs.getString('team');
+
+        print(isFiled);
+        print(teamJson);
+
+
+        Map<String, dynamic>? team;
+
+
+
+        if (teamJson != null) {
+          team = jsonDecode(teamJson); // Decode JSON to Map
+        }
+
+        if (isFiled == null) {
+          print('is_filed data not found in local storage');
+          // Handle case where is_filed is not found in local storage (optional)
+          return;
+        }
+
+        if (!isFiled) {
+          goCreateAccount();
+        } else {
+          if (team == null) {
+            goChooseClub();
+          } else {
+            goMyPages();
+          }
+        }
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -286,9 +207,11 @@ class _GetOtpState extends State<GetOtp> {
                     minimumSize: Size(width, height * .07),
                     backgroundColor: primary,
                   ),
-                  onPressed: (){
+                  onPressed: (){/*onCheckUser();*/
                     onCheckOtp();
+                    putTimer();
                     onCheckUser();
+
                   },
                   child: isLoading
                       ? const CircularProgressIndicator()
@@ -345,5 +268,9 @@ class _GetOtpState extends State<GetOtp> {
       context,
       MaterialPageRoute(builder: (context) => const ChooseClubTeam()),
     );
+  }
+
+  void putTimer()async {
+     Timer(const Duration(milliseconds: 1000), () {},);
   }
 }
