@@ -9,7 +9,10 @@ import '../utils/color.dart';
 import 'nav_bar/home_page.dart';
 
 class MyPages extends StatefulWidget {
-  const MyPages({super.key});
+  final int? teamId; // Allow teamId to be null
+
+  const MyPages({this.teamId});
+
 
   @override
   State<MyPages> createState() => _MyPagesState();
@@ -18,6 +21,9 @@ class MyPages extends StatefulWidget {
 class _MyPagesState extends State<MyPages> {
   late PageController controller;
   var selected = 0;
+
+
+
 
   @override
   void initState() {
@@ -32,15 +38,17 @@ class _MyPagesState extends State<MyPages> {
 
   @override
   Widget build(BuildContext context) {
+    final teamId = widget.teamId;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    print('teamid: $teamId');
     return Scaffold(
       backgroundColor: Color(0xffF6F6F6),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Transform.scale(
         scale: 1.5,
         child: FloatingActionButton(
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           backgroundColor: primary,
           onPressed: () {
             print('tapped');
@@ -53,8 +61,8 @@ class _MyPagesState extends State<MyPages> {
       ),
       body: PageView(
         controller: controller,
-        children: const [
-          HomePage(),
+        children:  [
+          HomePage(teamId: widget.teamId,),
           RatingPage(),
           // TicketPage(),
           HelpPage(),

@@ -1,13 +1,9 @@
 import 'dart:io';
-
 import 'package:e_chipta/pages/verify_profile.dart';
 import 'package:e_chipta/widget/birthday_picker.dart';
 import 'package:e_chipta/widget/image_picking.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../presentation/styles_manager.dart';
 import '../../utils/color.dart';
 

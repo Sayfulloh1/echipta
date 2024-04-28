@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> sendOtpEvent(String phoneNumber) async {
     setLoading();
     final fullNumber = '998$phoneNumber';
-    final result = await sl<AuthRepository>().sendOtp(phoneNumber: fullNumber);
+    final result = await sl<ApiRepository>().sendOtp(phoneNumber: fullNumber);
     result.fold(
       (left) {
 

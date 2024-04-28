@@ -1,4 +1,5 @@
 import 'package:e_chipta/pages/choose_club_page.dart';
+import 'package:e_chipta/pages/nav_bar/home_page.dart';
 import 'package:e_chipta/pages/page_navigation.dart';
 import 'package:e_chipta/pages/payment_screen.dart';
 import 'package:e_chipta/presentation/styles_manager.dart';
@@ -112,7 +113,7 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => hasPaymentDone
-                                ? const MyPages()
+                                ?  HomePage()
                                 : const PaymentScreen()));
                   },
                   child: Text(

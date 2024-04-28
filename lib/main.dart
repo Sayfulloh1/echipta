@@ -1,4 +1,5 @@
 import 'package:e_chipta/injector_container.dart';
+import 'package:e_chipta/pages/choose_club_page.dart';
 import 'package:e_chipta/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashPage(),
+      home: const ChooseClubTeam(),
     );
   }
 }

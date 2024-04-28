@@ -84,6 +84,6 @@ Future<void> init() async {
 void authFeature() {
   ///
   sl.registerLazySingleton(
-    () => AuthRepository(sl(), sl(), sl()),
+    () => ApiRepository(sl(), sl(), sl()),
   );
 }

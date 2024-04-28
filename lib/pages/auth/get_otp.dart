@@ -57,7 +57,7 @@ class _GetOtpState extends State<GetOtp> {
 
   void onCheckOtp() async {
     setLoading();
-    final data = await sl<AuthRepository>()
+    final data = await sl<ApiRepository>()
         .verifyOtp(phoneNumber: widget.phoneNumber, code: pinController.text);
 
     data.fold((left) {
@@ -73,7 +73,7 @@ class _GetOtpState extends State<GetOtp> {
   }
   void onCheckUser() async {
     setLoading();
-    final data = await sl<AuthRepository>().getMe();
+    final data = await sl<ApiRepository>().getMe();
 
     data.fold(
           (left) {

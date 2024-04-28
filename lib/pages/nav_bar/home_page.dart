@@ -1,4 +1,6 @@
 import 'package:e_chipta/controller/provider/match_provider.dart';
+import 'package:e_chipta/model/games_response.dart';
+import 'package:e_chipta/model/match_category.dart';
 import 'package:e_chipta/pages/choose_sector_page.dart';
 import 'package:e_chipta/pages/order_product.dart';
 import 'package:e_chipta/pages/station_locatin.dart';
@@ -9,14 +11,63 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../../injector_container.dart';
+import '../../repository/auth_repo.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  HomePage({this.teamId});
+
+  final int? teamId;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  var isLoading = false;
+
+  void setLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void dismissLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  List<MatchCategory> categories = [];
+  GamesResponse? games;
+
+  Future<void> _fetchCategories() async {
+    setLoading();
+    final result = await sl<ApiRepository>().getMatchCategories();
+    setState(() {
+      if (result.isRight) {
+        categories = result.right;
+      }
+    });
+  }
+
+  Future<void> _fetchGames() async {
+    setLoading();
+    final result = await sl<ApiRepository>().getGames();
+    setState(() {
+      if (result.isRight) {
+        games = result.right;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _fetchCategories();
+    _fetchGames();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -129,8 +180,9 @@ class _HomePageState extends State<HomePage> {
                                       SizedBox(
                                         width: height * .03,
                                         height: height * .03,
-                                        child: Image.asset(
-                                            'assets/images/teams/superliga.png'),
+                                        child: Image.network(
+                                          categories[0].image,
+                                        ),
                                       ),
                                       Text(
                                         'Superliga',
@@ -156,9 +208,10 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       SizedBox(
                                         width: height * .06,
-                                        height: height * .06,
-                                        child: Image.asset(
-                                            'assets/images/teams/cubok.png'),
+                                        height: height * .03,
+                                        child: Image.network(
+                                          categories[1].image,
+                                        ),
                                       ),
                                       Text(
                                         'Kubok',
@@ -202,7 +255,8 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ChooseSectorPage()));
+                                    builder: (context) =>
+                                        const ChooseSectorPage()));
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -223,13 +277,13 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(
                                             width: height * .05,
                                             height: height * .05,
-                                            child: Image.asset(
-                                                'assets/images/teams/neftchi.png')),
+                                            child: Image.network(
+                                               games!.currentMatch!.mainTeam.image)),
                                         SizedBox(
                                           height: height * .009,
                                         ),
                                         Text(
-                                          'Neftchi',
+                                          games!.currentMatch!.mainTeam.name,
                                           style: TextStyle(
                                             fontFamily: 'Poppins',
                                             color: primary,
@@ -242,15 +296,15 @@ class _HomePageState extends State<HomePage> {
                                     Column(
                                       children: [
                                         Text(
-                                          '17:00',
+                                          games!.currentMatch!.startDate.substring(11),
                                           style: TextStyle(
-                                            color: primary,
+                                              color: primary,
                                               fontWeight: FontWeight.bold,
                                               fontSize: height * .024,
                                               fontFamily: 'Poppins'),
                                         ),
                                         Text(
-                                          '30-mart',
+                                          games!.currentMatch!.startDate.substring(0,10).replaceAll('-',' . '),
                                           style: TextStyle(
                                             color: primary,
                                             fontWeight: FontWeight.bold,
@@ -265,13 +319,13 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(
                                             width: height * .05,
                                             height: height * .05,
-                                            child: Image.asset(
-                                                'assets/images/teams/neftchi.png')),
+                                            child: Image.network(
+                                              games!.currentMatch!.secondTeam.image)),
                                         SizedBox(
                                           height: height * .009,
                                         ),
                                         Text(
-                                          'Neftchi',
+                                          games!.currentMatch!.secondTeam.name,
                                           style: TextStyle(
                                             fontFamily: 'Poppins',
                                             color: primary,
@@ -354,18 +408,20 @@ class _HomePageState extends State<HomePage> {
 
                     // height: height * .5,
                     child: ListView.builder(
-                      itemCount: 3,
+                      itemCount: games!.categoryMatches![0].matches!.length,
                       physics: PageScrollPhysics(),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
+                        final game = games!.categoryMatches![0].matches![index];
                         return InkWell(
                           onTap: () {
                             print('tapped');
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ChooseSectorPage()));
+                                    builder: (context) =>
+                                        const ChooseSectorPage()));
                           },
                           child: Center(
                             child: Container(
@@ -378,14 +434,13 @@ class _HomePageState extends State<HomePage> {
                                   left: width * .04,
                                   right: width * .04),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
-                                   boxShadow: [
-                                     BoxShadow(
-                                       color: greyShade2,
-                                       spreadRadius: 3,
-                                       blurRadius: 2
-                                     ),
-                                   ],
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: greyShade2,
+                                      spreadRadius: 3,
+                                      blurRadius: 2),
+                                ],
                                 borderRadius:
                                     BorderRadius.circular(height * .033),
                               ),
@@ -398,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Andijon',
+                                            game.mainTeam.name,
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
                                               color: primary,
@@ -412,14 +467,14 @@ class _HomePageState extends State<HomePage> {
                                           SizedBox(
                                               width: height * .04,
                                               height: height * .04,
-                                              child: Image.asset(
-                                                  'assets/images/teams/neftchi.png')),
+                                              child: Image.network(
+                                                   game.mainTeam.image)),
                                         ],
                                       ),
                                       Column(
                                         children: [
                                           Text(
-                                            '30-mart',
+                                            game.startDate.substring(10),
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: height * .016,
@@ -428,15 +483,15 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           Container(
-                                            width: width*.2,
-                                            height: height*.02,
+                                            width: width * .2,
+                                            height: height * .02,
                                             decoration: BoxDecoration(
-                                              color:  Colors.green,
-                                              borderRadius: BorderRadius.circular(10),
+                                              color: Colors.green,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                            child:  Center(
+                                            child: Center(
                                               child: Text(
-
                                                 'Boshlandi',
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins',
@@ -454,13 +509,13 @@ class _HomePageState extends State<HomePage> {
                                           SizedBox(
                                               width: height * .04,
                                               height: height * .04,
-                                              child: Image.asset(
-                                                  'assets/images/teams/neftchi.png')),
+                                              child: Image.network(
+                                                  game.secondTeam.image)),
                                           SizedBox(
                                             height: width * .009,
                                           ),
                                           Text(
-                                            'Neftchi',
+                                            game.secondTeam.name,
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
                                               color: primary,
@@ -500,11 +555,12 @@ class _HomePageState extends State<HomePage> {
                     width: width,
                     // height: height * .5,
                     child: ListView.builder(
-                      itemCount: 1,
+                      itemCount: games!.categoryMatches![1].matches!.length,
                       physics: PageScrollPhysics(),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
+                       final game =  games!.categoryMatches![1].matches![index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -548,7 +604,7 @@ class _HomePageState extends State<HomePage> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Andijon',
+                                              game.mainTeam.name,
                                               style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 color: primary,
@@ -562,14 +618,14 @@ class _HomePageState extends State<HomePage> {
                                             SizedBox(
                                                 width: height * .04,
                                                 height: height * .04,
-                                                child: Image.asset(
-                                                    'assets/images/teams/neftchi.png')),
+                                                child: Image.network(
+                                                    game.mainTeam.image)),
                                           ],
                                         ),
                                         Column(
                                           children: [
                                             Text(
-                                              '30-mart',
+                                              game.startDate.substring(10),
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: height * .016,
@@ -578,15 +634,15 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                             ),
                                             Container(
-                                              width: width*.2,
-                                              height: height*.02,
+                                              width: width * .2,
+                                              height: height * .02,
                                               decoration: BoxDecoration(
-                                                color:  primary,
-                                                borderRadius: BorderRadius.circular(10),
+                                                color: primary,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
-                                              child:  Center(
+                                              child: Center(
                                                 child: Text(
-
                                                   '00-00-00-00',
                                                   style: TextStyle(
                                                     fontFamily: 'Poppins',
@@ -604,13 +660,13 @@ class _HomePageState extends State<HomePage> {
                                             SizedBox(
                                                 width: height * .04,
                                                 height: height * .04,
-                                                child: Image.asset(
-                                                    'assets/images/teams/neftchi.png')),
+                                                child: Image.network(
+                                                    game.secondTeam.image)),
                                             SizedBox(
                                               height: width * .009,
                                             ),
                                             Text(
-                                              'Neftchi',
+                                              game.secondTeam.name,
                                               style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 color: primary,
@@ -659,7 +715,10 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderProductPage()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OrderProductPage()));
                           },
                           child: Container(
                               color: Colors.transparent,
