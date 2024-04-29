@@ -400,8 +400,8 @@ class ApiRepository {
   Future<Either<Failure, TicketInfo>> getTicketInfo({
     required int matchId,
     required String sector,
-    required int row,
-    required int seat,
+    required String row,
+    required String seat,
   }) async {
     if (await networkInfo.isConnected) {
       try {

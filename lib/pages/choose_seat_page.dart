@@ -24,6 +24,8 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
 
   late final WebViewController _controller;
   var data;
+  var row;
+  var seat;
 
   @override
   void initState() {
@@ -86,12 +88,14 @@ Page resource error:
         onMessageReceived: (JavaScriptMessage message) {
 
           data  = jsonDecode(message.message);
+          row = data['row'];
+          seat = data['seat'];
           // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChooseSeatPage(sectorId: message.message)));
 
 
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
+            SnackBar(content: Text('seat is $seat and row is $row')),
 
           );
         },
@@ -159,13 +163,13 @@ Page resource error:
                             SizedBox(
                                 width: height * .05,
                                 height: height * .05,
-                                child: Image.asset(
-                                    'assets/images/teams/neftchi.png')),
+                                child: Image.network(
+                                    widget.match.mainTeam.image,)),
                             SizedBox(
                               height: height * .009,
                             ),
                             Text(
-                              'Neftchi',
+                              widget.match.mainTeam.name,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.grey,
@@ -200,12 +204,12 @@ Page resource error:
                                 width: height * .05,
                                 height: height * .05,
                                 child: Image.asset(
-                                    'assets/images/teams/neftchi.png')),
+                                  widget.match.secondTeam.image,)),
                             SizedBox(
                               height: height * .009,
                             ),
                             Text(
-                              'Neftchi',
+                              widget.match.secondTeam.name,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.grey,
@@ -232,7 +236,7 @@ Page resource error:
             ),
             Container(
               width: width,
-              height: height*.3 ,
+              // height: height*.3 ,
               child: InteractiveViewer(
                 panEnabled: false,
                 // Set it to false to prevent panning.
@@ -302,7 +306,7 @@ Page resource error:
             SizedBox(
               height: height * .02,
             ),
-            Padding(
+           /* Padding(
               padding: EdgeInsets.symmetric(horizontal: width * .02),
               child: Container(
                 width: width,
@@ -312,17 +316,22 @@ Page resource error:
                   fit: BoxFit.contain,
                 ),
               ),
-            ),
+            ),*/
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(width*.8, height * .07),
                 backgroundColor: primary,
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => VisualStadiumPage()));
+                if(seat!=null){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VisualStadiumPage(game:widget.match,sectorId:widget.sectorId,seat:seat!,row:row!)));
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Joy tanlanmadi')),);
+                }
               },
               child: Text(
                 "Joyni ko'rish",

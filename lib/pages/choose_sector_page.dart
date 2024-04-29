@@ -210,6 +210,7 @@ Page resource error:
     // #enddocregion platform_features
 
     _controller = controller;
+
   }
 
   @override

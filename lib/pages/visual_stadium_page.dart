@@ -1,18 +1,60 @@
+
+import 'package:e_chipta/model/games_response.dart';
+import 'package:e_chipta/model/ticket_info.dart';
 import 'package:e_chipta/pages/payment_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:panorama_viewer/panorama_viewer.dart';
 // import 'package:panorama/panorama.dart';
 
+import '../injector_container.dart';
+import '../repository/auth_repo.dart';
 import '../utils/color.dart';
 
 class VisualStadiumPage extends StatefulWidget {
-  const VisualStadiumPage({super.key});
+  const VisualStadiumPage({super.key, required  this.game, required this.sectorId, required this.seat, required this.row});
+  final Match game;
+  final String sectorId;
+  final String row;
+  final String seat;
 
   @override
   State<VisualStadiumPage> createState() => _VisualStadiumPageState();
 }
 
 class _VisualStadiumPageState extends State<VisualStadiumPage> {
+  var isLoading = false;
+
+  TicketInfo? ticketInfo;
+
+  void setLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void dismissLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _getTicketInfo() async {
+    setLoading();
+    final result = await sl<ApiRepository>()
+        .getTicketInfo(matchId: widget.game.id, sector: widget.sectorId, row: widget.row, seat: widget.seat);
+    setState(() {
+      if (result.isRight) {
+        ticketInfo = result.right;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _getTicketInfo();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -23,8 +65,11 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
         centerTitle: true,
         title: Text(
           'Vizual ko\'rinish',
-          style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins',color: Colors.white),
-
+          style: TextStyle(
+              fontSize: height * .02,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+              color: Colors.white),
         ),
         leading: IconButton(
           icon: Icon(
@@ -39,19 +84,21 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
       ),
       body: Stack(
         children: [
-          Positioned(
+          /*Positioned(
             top: height * .1,
             left: width * .1,
             child: Image.asset('assets/images/panorama.png'),
-          ),
+          ),*/
           Center(
-            child: Image.asset('assets/images/stadium.png'),
+            child: PanoramaViewer(
+              child: Image.network(ticketInfo!.panorama),
+            ),
           ),
-          Positioned(
+         /* Positioned(
             top: height * .02,
             left: width * .1,
-            child: Image.asset('assets/images/panorama.png'),
-          ),
+            child: Image.network(ticketInfo!.panorama),
+          ),*/
           Positioned(
             bottom: height * .01,
             left: width * .1,
@@ -68,14 +115,17 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
               },
               child: Text(
                 "Sotib olish",
-                style: TextStyle(fontSize: height * .02,fontWeight: FontWeight.bold,fontFamily: 'Poppins',color: Colors.white),
-
+                style: TextStyle(
+                    fontSize: height * .02,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
+                    color: Colors.white),
               ),
             ),
           ),
           Positioned(
-            bottom: height*.2,
-            left: width*.1,
+            bottom: height * .2,
+            left: width * .1,
             child: Column(
               children: [
                 Container(
@@ -94,7 +144,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                             ),
                           ),
                           Text(
-                            '1A',
+                            widget.sectorId,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: height * .02,
@@ -114,7 +164,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                             ),
                           ),
                           Text(
-                            '10',
+                            widget.row,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: height * .02,
@@ -134,7 +184,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                             ),
                           ),
                           Text(
-                            '9',
+                            widget.seat,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: height * .02,
