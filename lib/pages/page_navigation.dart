@@ -1,7 +1,6 @@
 import 'package:e_chipta/pages/nav_bar/help_page.dart';
 import 'package:e_chipta/pages/nav_bar/profile_page.dart';
 import 'package:e_chipta/pages/nav_bar/rating_page.dart';
-import 'package:e_chipta/pages/nav_bar/ticket_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +61,7 @@ class _MyPagesState extends State<MyPages> {
       body: PageView(
         controller: controller,
         children:  [
-          HomePage(teamId: widget.teamId,),
+          HomePage(teamId: widget.teamId),
           RatingPage(),
           // TicketPage(),
           HelpPage(),

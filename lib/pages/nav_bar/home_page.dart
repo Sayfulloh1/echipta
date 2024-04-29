@@ -1,21 +1,16 @@
-import 'package:e_chipta/controller/provider/match_provider.dart';
 import 'package:e_chipta/model/games_response.dart';
 import 'package:e_chipta/model/match_category.dart';
 import 'package:e_chipta/pages/choose_sector_page.dart';
 import 'package:e_chipta/pages/order_product.dart';
 import 'package:e_chipta/pages/station_locatin.dart';
 import 'package:e_chipta/utils/color.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 import '../../injector_container.dart';
 import '../../repository/auth_repo.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({this.teamId});
+  HomePage({super.key, this.teamId});
 
   final int? teamId;
 
@@ -41,7 +36,7 @@ class _HomePageState extends State<HomePage> {
   List<MatchCategory> categories = [];
   GamesResponse? games;
 
-  Future<void> _fetchCategories() async {
+  Future<void> _fetchContent() async {
     setLoading();
     final result = await sl<ApiRepository>().getMatchCategories();
     setState(() {
@@ -49,6 +44,8 @@ class _HomePageState extends State<HomePage> {
         categories = result.right;
       }
     });
+    await _fetchGames();
+    dismissLoading();
   }
 
   Future<void> _fetchGames() async {
@@ -63,8 +60,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _fetchCategories();
-    _fetchGames();
+    _fetchContent();
     super.initState();
   }
 
@@ -72,6 +68,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+    if (isLoading) {
+      return const Material(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Material(
       color: const Color(0xffF6F6F6),
       child: SingleChildScrollView(
@@ -255,8 +259,9 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                         ChooseSectorPage(game: games!.currentMatch as Match,)));
+                                    builder: (context) => ChooseSectorPage(
+                                          game: games!.currentMatch as Match,
+                                        )));
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -277,8 +282,11 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(
                                             width: height * .05,
                                             height: height * .05,
-                                            child: Image.network(
-                                               games!.currentMatch!.mainTeam.image)),
+                                            child: Image.network(games
+                                                    ?.currentMatch
+                                                    ?.mainTeam
+                                                    .image ??
+                                                '')),
                                         SizedBox(
                                           height: height * .009,
                                         ),
@@ -296,7 +304,8 @@ class _HomePageState extends State<HomePage> {
                                     Column(
                                       children: [
                                         Text(
-                                          games!.currentMatch!.startDate.substring(11),
+                                          games!.currentMatch!.startDate
+                                              .substring(11),
                                           style: TextStyle(
                                               color: primary,
                                               fontWeight: FontWeight.bold,
@@ -304,7 +313,9 @@ class _HomePageState extends State<HomePage> {
                                               fontFamily: 'Poppins'),
                                         ),
                                         Text(
-                                          games!.currentMatch!.startDate.substring(0,10).replaceAll('-',' . '),
+                                          games!.currentMatch!.startDate
+                                              .substring(0, 10)
+                                              .replaceAll('-', ' . '),
                                           style: TextStyle(
                                             color: primary,
                                             fontWeight: FontWeight.bold,
@@ -319,8 +330,10 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(
                                             width: height * .05,
                                             height: height * .05,
-                                            child: Image.network(
-                                              games!.currentMatch!.secondTeam.image)),
+                                            child: Image.network(games!
+                                                .currentMatch!
+                                                .secondTeam
+                                                .image)),
                                         SizedBox(
                                           height: height * .009,
                                         ),
@@ -413,7 +426,8 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
-                        final Match game = games!.categoryMatches![0].matches![index];
+                        final Match game =
+                            games!.categoryMatches![0].matches![index];
                         return InkWell(
                           onTap: () {
                             print('tapped');
@@ -421,7 +435,7 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                         ChooseSectorPage(game:game)));
+                                        ChooseSectorPage(game: game)));
                           },
                           child: Center(
                             child: Container(
@@ -468,7 +482,7 @@ class _HomePageState extends State<HomePage> {
                                               width: height * .04,
                                               height: height * .04,
                                               child: Image.network(
-                                                   game.mainTeam.image)),
+                                                  game.mainTeam.image)),
                                         ],
                                       ),
                                       Column(
@@ -560,13 +574,15 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
-                       final game =  games!.categoryMatches![1].matches![index];
+                        final game = games!.categoryMatches![1].matches![index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChooseSectorPage(game: game,)));
+                                    builder: (context) => ChooseSectorPage(
+                                          game: game,
+                                        )));
                           },
                           child: InkWell(
                             onTap: () {
