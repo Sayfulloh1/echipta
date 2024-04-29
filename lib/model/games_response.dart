@@ -14,7 +14,7 @@ class   GamesResponse {
   );
 }
 
-class CurrentMatch {
+class CurrentMatch extends Match {
   final int id;
   final String title;
   final String startDate;
@@ -27,7 +27,7 @@ class CurrentMatch {
     required this.startDate,
     required this.mainTeam,
     required this.secondTeam,
-  });
+  }) : super(id: id, title:title, startDate: startDate, mainTeam: mainTeam, secondTeam: secondTeam);
 
   factory CurrentMatch.fromJson(Map<String, dynamic> json) => CurrentMatch(
     id: json['id'] as int,

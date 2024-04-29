@@ -1,18 +1,116 @@
+import 'dart:convert';
+
+import 'package:e_chipta/model/games_response.dart';
 import 'package:e_chipta/pages/visual_stadium_page.dart';
 import 'package:e_chipta/utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ChooseSeatPage extends StatefulWidget {
-  const ChooseSeatPage({super.key, required sectorId});
+  const ChooseSeatPage({super.key,  required this.sectorId, required this.match});
+  final String sectorId;
+  final Match match;
 
   @override
   State<ChooseSeatPage> createState() => _ChooseSeatPageState();
 }
 
 class _ChooseSeatPageState extends State<ChooseSeatPage> {
+
+  late final WebViewController _controller;
+  var data;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // #docregion platform_features
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final WebViewController controller =
+    WebViewController.fromPlatformCreationParams(params);
+    // #enddocregion platform_features
+
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            debugPrint('WebView is loading (progress : $progress%)');
+          },
+          onPageStarted: (String url) {
+            debugPrint('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            debugPrint('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+Page resource error:
+  code: ${error.errorCode}
+  description: ${error.description}
+  errorType: ${error.errorType}
+  isForMainFrame: ${error.isForMainFrame}
+          ''');
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              debugPrint('blocking navigation to ${request.url}');
+              return NavigationDecision.prevent;
+            }
+            debugPrint('allowing navigation to ${request.url}');
+            return NavigationDecision.navigate;
+          },
+          onUrlChange: (UrlChange change) {
+            debugPrint('url change to ${change.url}');
+          },
+          onHttpAuthRequest: (HttpAuthRequest request) {},
+        ),
+      )
+      ..addJavaScriptChannel(
+        'eventSeat',
+        onMessageReceived: (JavaScriptMessage message) {
+
+          data  = jsonDecode(message.message);
+          // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChooseSeatPage(sectorId: message.message)));
+
+
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+
+          );
+        },
+      )
+      ..loadRequest(Uri.parse('https://select-ticket.echipta.uz/select-ticket?sector=${widget.sectorId}&match=${widget.match.id}'));
+
+    // #docregion platform_features
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+    // #enddocregion platform_features
+
+    _controller = controller;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -134,10 +232,19 @@ class _ChooseSeatPageState extends State<ChooseSeatPage> {
             ),
             Container(
               width: width,
-              height: height * .3,
-              margin: EdgeInsets.symmetric(
-                  horizontal: width * .01, vertical: width * .01),
-              color: grey,
+              height: height*.3 ,
+              child: InteractiveViewer(
+                panEnabled: false,
+                // Set it to false to prevent panning.
+                // boundaryMargin: EdgeInsets.all(80),
+                minScale: 0.5,
+                maxScale: 4,
+                child: Container(
+                  width: width,
+                  height: height * .7,
+                  child: WebViewWidget(controller: _controller),
+                ),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

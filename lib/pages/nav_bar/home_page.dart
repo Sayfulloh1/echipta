@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChooseSectorPage()));
+                                         ChooseSectorPage(game: games!.currentMatch as Match,)));
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -413,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
-                        final game = games!.categoryMatches![0].matches![index];
+                        final Match game = games!.categoryMatches![0].matches![index];
                         return InkWell(
                           onTap: () {
                             print('tapped');
@@ -421,7 +421,7 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChooseSectorPage()));
+                                         ChooseSectorPage(game:game)));
                           },
                           child: Center(
                             child: Container(
@@ -566,7 +566,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChooseSectorPage()));
+                                    builder: (context) => ChooseSectorPage(game: game,)));
                           },
                           child: InkWell(
                             onTap: () {

@@ -9,9 +9,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:e_chipta/model/games_response.dart';
+import 'package:e_chipta/pages/choose_seat_page.dart';
 import 'package:e_chipta/utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -113,7 +116,9 @@ const String kLogExamplePage = '''
 ''';
 
 class ChooseSectorPage extends StatefulWidget {
-  const ChooseSectorPage({super.key});
+  const ChooseSectorPage({super.key, required this.game});
+  final Match game ;
+
 
   @override
   State<ChooseSectorPage> createState() => _ChooseSectorPageState();
@@ -121,6 +126,7 @@ class ChooseSectorPage extends StatefulWidget {
 
 class _ChooseSectorPageState extends State<ChooseSectorPage> {
   late final WebViewController _controller;
+  var data;
 
   @override
   void initState() {
@@ -179,10 +185,17 @@ Page resource error:
         ),
       )
       ..addJavaScriptChannel(
-        'Toaster',
+        'eventSector',
         onMessageReceived: (JavaScriptMessage message) {
+
+             data  = jsonDecode(message.message);
+             Navigator.push(context, MaterialPageRoute(builder: (context)=>ChooseSeatPage(sectorId: message.message,match: widget.game,)));
+
+
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message.message)),
+
           );
         },
       )
@@ -213,11 +226,12 @@ Page resource error:
             color: Colors.white,
           ),
           onPressed: () {
+
             Navigator.pop(context);
           },
         ),
         title: Text(
-          "Sektor tanlash",
+          "Sektorni tanlang",
           style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -256,13 +270,13 @@ Page resource error:
                             SizedBox(
                                 width: height * .05,
                                 height: height * .05,
-                                child: Image.asset(
-                                    'assets/images/teams/neftchi.png')),
+                                child: Image.network(
+                                    widget.game.mainTeam.image)),
                             SizedBox(
                               height: height * .009,
                             ),
                             Text(
-                              'Neftchi',
+                              widget.game.mainTeam.name,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.grey,
@@ -297,12 +311,12 @@ Page resource error:
                                 width: height * .05,
                                 height: height * .05,
                                 child: Image.asset(
-                                    'assets/images/teams/neftchi.png')),
+                                    widget.game.secondTeam.image)),
                             SizedBox(
                               height: height * .009,
                             ),
                             Text(
-                              'Neftchi',
+                              widget.game.secondTeam.name,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.grey,
@@ -328,16 +342,21 @@ Page resource error:
               ),
             ),
           ),
-          InteractiveViewer(
-            panEnabled: false,
-            // Set it to false to prevent panning.
-            // boundaryMargin: EdgeInsets.all(80),
-            minScale: 0.5,
-            maxScale: 4,
-            child: Container(
-              width: width,
-              height: height * .7,
-              child: WebViewWidget(controller: _controller),
+          GestureDetector(
+            onTap: (){
+              print('id is :${data['id']}');
+            },
+            child: InteractiveViewer(
+              panEnabled: false,
+              // Set it to false to prevent panning.
+              // boundaryMargin: EdgeInsets.all(80),
+              minScale: 0.5,
+              maxScale: 4,
+              child: Container(
+                width: width,
+                height: height * .7,
+                child: WebViewWidget(controller: _controller),
+              ),
             ),
           ),
           Row(
