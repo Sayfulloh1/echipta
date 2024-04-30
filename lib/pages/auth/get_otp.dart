@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:e_chipta/pages/auth/create_account.dart';
+import 'package:e_chipta/pages/find_my_next_page.dart';
 import 'package:e_chipta/repository/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
@@ -59,6 +60,10 @@ class _GetOtpState extends State<GetOtp> {
     setLoading();
     final data = await sl<ApiRepository>()
         .verifyOtp(phoneNumber: widget.phoneNumber, code: pinController.text);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('OTP tasdiqlandi')));
+    dismissLoading();
+    goFindMyNextPage();
 
     data.fold((left) {
       print('error left: ${left.message}');
@@ -71,54 +76,7 @@ class _GetOtpState extends State<GetOtp> {
 
     });
   }
-  void onCheckUser() async {
-    setLoading();
-    final data = await sl<ApiRepository>().getMe();
 
-    data.fold(
-          (left) {
-        print('error left: ${left.message}');
-        dismissLoading();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('error: ${left.message}')));
-      },
-          (right) async {
-        dismissLoading();
-        // Retrieve is_filed and team from local storage
-        final prefs = await SharedPreferences.getInstance();
-        final isFiled = prefs.getBool('is_filed');
-        final teamJson = prefs.getString('team');
-
-        print(isFiled);
-        print(teamJson);
-
-
-        Map<String, dynamic>? team;
-
-
-
-        if (teamJson != null) {
-          team = jsonDecode(teamJson); // Decode JSON to Map
-        }
-
-        if (isFiled == null) {
-          print('is_filed data not found in local storage');
-          // Handle case where is_filed is not found in local storage (optional)
-          return;
-        }
-
-        if (!isFiled) {
-          goCreateAccount();
-        } else {
-          if (team == null) {
-            goChooseClub();
-          } else {
-            goMyPages();
-          }
-        }
-      },
-    );
-  }
 
 
   @override
@@ -209,8 +167,8 @@ class _GetOtpState extends State<GetOtp> {
                   ),
                   onPressed: (){/*onCheckUser();*/
                     onCheckOtp();
-                    putTimer();
-                    onCheckUser();
+                    // putTimer();
+                    // onCheckUser();
 
                   },
                   child: isLoading
@@ -249,28 +207,12 @@ class _GetOtpState extends State<GetOtp> {
     return null;
   }
 
-  void goCreateAccount() {
+  void goFindMyNextPage() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const CreateAccount()),
+      MaterialPageRoute(builder: (context) => const FindMyNextPage()),
     );
   }
 
-  void goMyPages() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MyPages()),
-    );
-  }
 
-  void goChooseClub() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const ChooseClubTeam()),
-    );
-  }
-
-  void putTimer()async {
-     Timer(const Duration(milliseconds: 1000), () {},);
-  }
 }
