@@ -487,7 +487,7 @@ class ApiRepository {
 
         if (response.statusCode == 200) {
           final responseData = response.data as Map<String, dynamic>;
-          if (responseData['code'] == 0 && responseData['message'] == 'successfully payed') {
+          if (responseData['message'] == 'successfully payed') {
             return const Right(null); // Consider returning relevant data if needed
           } else {
             // Handle API error
