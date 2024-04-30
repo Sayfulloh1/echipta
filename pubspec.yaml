@@ -82,7 +82,7 @@ flutter:
   assets:
     - assets/svg/station.svg
     - assets/images/
-    - assets/images/karta.png
+    - assets/images/payment/
     - assets/images/teams/
     - assets/svg/
     - assets/svg/station.svg
