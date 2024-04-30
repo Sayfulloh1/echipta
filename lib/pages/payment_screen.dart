@@ -1,3 +1,4 @@
+import 'package:e_chipta/model/games_response.dart';
 import 'package:e_chipta/pages/payment_status_page.dart';
 import 'package:e_chipta/presentation/styles_manager.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,11 @@ import '../utils/color.dart';
 enum PaymentMethod { Click, Account, AlifNasiya, CreditCard }
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
-
+  const PaymentScreen({super.key, required this.game, required this.sectorId, required this.seat, required this.row});
+  final Match game;
+  final String sectorId;
+  final String row;
+  final String seat;
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
@@ -43,16 +47,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Future<void> _payForTicket() async {
     setLoading();
-    final result = await sl<ApiRepository>().ticketPayment(matchId: 1, sector: '1A', row: 1, seat: 1, paymentType: 'balance');
-    setState(() {
+    final result = await sl<ApiRepository>().ticketPayment(matchId: widget.game.id, sector: widget.sectorId, row: widget.row, seat: widget.seat, paymentType: 'balance');
+
       if (result.isRight) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("To'lov muvaffaqqiyatli amalga oshirildi")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.right['message'])));
       }
       else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("To'lov qilishda xatolik bo'ldi")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.left.message)));
 
       }
-    });
+
   }
 
 
@@ -296,7 +300,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     height * .06,
                   ),
                 ),
-                child: isLoading?CircularProgressIndicator(color: Colors.white,): Text(
+                child:  Text(
                   "To'lov qilish",
                   style: TextStyle(
                     color: Colors.white,

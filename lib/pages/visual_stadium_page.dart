@@ -111,7 +111,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const PaymentScreen()));
+                        builder: (context) =>  PaymentScreen(game:widget.game,sectorId:widget.sectorId,seat:widget.seat,row:widget.row)));
               },
               child: Text(
                 "Sotib olish",
@@ -164,7 +164,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                             ),
                           ),
                           Text(
-                            widget.row,
+                            widget.row.toString(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: height * .02,
@@ -184,7 +184,7 @@ class _VisualStadiumPageState extends State<VisualStadiumPage> {
                             ),
                           ),
                           Text(
-                            widget.seat,
+                            widget.seat.toString(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: height * .02,

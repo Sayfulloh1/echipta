@@ -109,12 +109,12 @@ class _PaymentStatusPageState extends State<PaymentStatusPage> {
                     backgroundColor: primary,
                   ),
                   onPressed: () {
-                    Navigator.push(
+                  /*  Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => hasPaymentDone
                                 ?  HomePage()
-                                : const PaymentScreen()));
+                                : const PaymentScreen()));*/
                   },
                   child: Text(
                       hasPaymentDone ? "Chiptani ko'rish" : "Qayta urinish",

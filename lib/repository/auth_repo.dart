@@ -446,11 +446,11 @@ class ApiRepository {
 
 
   // ticket payment
-  Future<Either<Failure, void>> ticketPayment({
+  Future<Either<Failure, Map<String,dynamic>>> ticketPayment({
     required int matchId,
     required String sector,
-    required int row,
-    required int seat,
+    required String row,
+    required String seat,
     required String paymentType,
   }) async {
     if (await networkInfo.isConnected) {
@@ -488,16 +488,19 @@ class ApiRepository {
         if (response.statusCode == 200) {
           final responseData = response.data as Map<String, dynamic>;
           if (responseData['message'] == 'successfully payed') {
-            return const Right(null); // Consider returning relevant data if needed
+            return  Right(responseData); // Consider returning relevant data if needed
           } else {
             // Handle API error
             print('API error: ${responseData['message']}');
-            throw Exception('Failed to make ticket payment');
+            return  Left(ServerFailure(message: 'Error occured in server'));
+
           }
         } else {
           // Handle general error
           print('Error making ticket payment: ${response.statusCode}');
-          throw Exception('Failed to make ticket payment');
+        var responseData=  response.data;
+          return  Left(ServerFailure(message: 'Error occured in server 2'));
+
         }
       } catch (error) {
         // Handle exceptions
